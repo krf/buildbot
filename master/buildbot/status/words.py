@@ -904,10 +904,10 @@ class StatusBot:
 
     contactClass = Contact
 
-    def __init__(self, status, categories, notify_events, noticeOnChannel=False,
+    def __init__(self, status, tags, notify_events, noticeOnChannel=False,
             useRevisions=False, showBlameList=False, useColors=True):
 
-        self.categories = categories
+        self.tags = tags
         self.notify_events = notify_events
         self.noticeOnChannel = noticeOnChannel
         self.useColors = useColors
@@ -1095,7 +1095,6 @@ class IrcStatusFactory(ThrottledClientFactory):
     def __init__(self, nickname, password, channels, pm_to_nicks, tags, notify_events,
                  noticeOnChannel=False, useRevisions=False, showBlameList=False,
                  lostDelay=None, failedDelay=None, useColors=True, allowShutdown=False,
-                 categories=None  # deprecated, use tags instead
                  ):
         ThrottledClientFactory.__init__(self, lostDelay=lostDelay,
                                         failedDelay=failedDelay)
@@ -1104,7 +1103,7 @@ class IrcStatusFactory(ThrottledClientFactory):
         self.password = password
         self.channels = channels
         self.pm_to_nicks = pm_to_nicks
-        self.tags = tags or categories
+        self.tags = tags or tags
         self.notify_events = notify_events
         self.noticeOnChannel = noticeOnChannel
         self.useRevisions = useRevisions
@@ -1166,7 +1165,6 @@ class IRC(base.StatusReceiverMultiService):
                  noticeOnChannel=False, showBlameList=True, useRevisions=False,
                  useSSL=False, lostDelay=None, failedDelay=None, useColors=True,
                  allowShutdown=False,
-                 categories=None  # deprecated
                  ):
         base.StatusReceiverMultiService.__init__(self)
 
@@ -1184,7 +1182,7 @@ class IRC(base.StatusReceiverMultiService):
         self.password = password
         self.allowForce = allowForce
         self.useRevisions = useRevisions
-        self.tags = tags or categories
+        self.tags = tags or tags
         self.notify_events = notify_events
         self.allowShutdown = allowShutdown
 

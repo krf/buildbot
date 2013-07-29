@@ -17,7 +17,12 @@ import mock
 
 from buildbot.status import words
 from buildbot.test.fake.fakebuild import FakeBuildStatus
-from buildbot.test.util import compat, config
+from buildbot.test.util import compat
+from buildbot.test.util import config
+from twisted.application import internet
+from twisted.internet import reactor
+from twisted.internet import task
+from twisted.trial import unittest
 
 class FakeStatusBot(words.StatusBot):
 
@@ -31,7 +36,7 @@ class TestIrcContactChannel(unittest.TestCase):
 
     def setUp(self):
         self.bot = FakeStatusBot(status = mock.Mock(name='status'),
-            categories=None,
+            tags=None,
             notify_events = { 'success' : 1, 'failure' : 1 }
         )
 
