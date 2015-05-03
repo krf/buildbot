@@ -181,6 +181,11 @@ def _defaultMessageSummary(build, results):
 
     return text
 
+def defaultBuildSetMessage(mode, name, builds, results, master_status):
+    """Generate a buildbot mail summary message and return a tuple of message text
+        and type."""
+
+    return {'body': ""}
 
 def defaultMessage(mode, name, build, results, master_status):
     """Generate a buildbot mail message and return a tuple of message text
@@ -205,7 +210,7 @@ def defaultMessage(mode, name, build, results, master_status):
     text += " -The Buildbot\n"
     text += "\n"
 
-    return {'body': text, 'type': 'plain'}
+    return {'body': text}
 
 
 def defaultGetPreviousBuild(current_build):
@@ -247,7 +252,7 @@ class MailNotifier(base.StatusReceiverMultiService, buildset.BuildSetSummaryNoti
                  subject="buildbot %(result)s in %(title)s on %(builder)s",
                  lookup=None, extraRecipients=[],
                  sendToInterestedUsers=True, customMesg=None,
-                 messageFormatter=defaultMessage, extraHeaders=None,
+                 buildSetMessageFormatter=defaultBuildSetMessage, messageFormatter=defaultMessage, extraHeaders=None,
                  addPatch=True, useTls=False,
                  smtpUser=None, smtpPassword=None, smtpPort=25,
                  previousBuildGetter=defaultGetPreviousBuild,
@@ -422,6 +427,7 @@ class MailNotifier(base.StatusReceiverMultiService, buildset.BuildSetSummaryNoti
             assert interfaces.IEmailLookup.providedBy(lookup)
         self.lookup = lookup
         self.customMesg = customMesg
+        self.buildSetMessageFormatter = buildSetMessageFormatter
         self.messageFormatter = messageFormatter
         if extraHeaders:
             if not isinstance(extraHeaders, dict):
@@ -720,7 +726,10 @@ class MailNotifier(base.StatusReceiverMultiService, buildset.BuildSetSummaryNoti
     def buildMessage(self, name, builds, results):
         patches = []
         logs = []
-        msgdict = {"body": ""}
+        msgdict = {'body': "", 'type': 'plain'}
+
+        tmp = self.buildSetMessageFormatter(self.mode, name, builds, results, self.master_status)
+        msgdict.update(tmp)
 
         for build in builds:
             ss_list = build.getSourceStamps()
@@ -735,7 +744,8 @@ class MailNotifier(base.StatusReceiverMultiService, buildset.BuildSetSummaryNoti
                                         build=build, results=build.results)
             msgdict['body'] += tmp['body']
             msgdict['body'] += '\n\n'
-            msgdict['type'] = tmp['type']
+            if 'type' in tmp:
+                msgdict['type'] = tmp['type']
             if "subject" in tmp:
                 msgdict['subject'] = tmp['subject']
 

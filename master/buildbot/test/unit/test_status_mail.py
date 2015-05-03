@@ -1160,8 +1160,7 @@ class TestDefaultMessage(unittest.TestCase):
         message = mail.defaultMessage(("all"), "test-build", build,
                                       SUCCESS, Mock())
 
-        expected_message = dict(type="plain",
-                                body="intro on builder test-build while building project.\n"
+        expected_message = dict(body="intro on builder test-build while building project.\n"
                                 "url\nBuildslave for this Build: slave-name\n\n"
                                 "Build Reason: build-reason\n"
                                 "source-stampBlamelist: usr1,usr2\n\nsummary\n"
