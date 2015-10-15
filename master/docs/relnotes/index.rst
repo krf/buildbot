@@ -100,6 +100,7 @@ Fixes
 
 * GitHub change hook now correctly responds to ping events.
 * ``buildbot.steps.http`` steps now correctly have ``url`` parameter renderable
+* Cloning :bb:step:`Git` repository with submodules now works with Git < 1.7.6 instead of failing due to the use of the unsupported ``--force`` option.
 * :bb:step:`MasterShellCommand` now correctly logs the working directory where it was run.
 * With Git(), force the updating submodules to ensure local changes by the build are overwitten.
   This both ensures more consistent builds and avoids errors when updating submodules.

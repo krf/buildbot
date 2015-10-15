@@ -124,6 +124,7 @@ class Git(Source):
         self.getDescription = getDescription
         self.config = config
         self.supportsBranch = True
+        self.supportsSubmoduleForce = True
         self.srcdir = 'source'
         Source.__init__(self, **kwargs)
 
@@ -522,8 +523,10 @@ class Git(Source):
 
     def _updateSubmodule(self, _=None):
         if self.submodules:
-            return self._dovccmd(['submodule', 'update',
-                                  '--init', '--recursive', '--force'])
+            command = ['submodule', 'update', '--init', '--recursive']
+            if self.supportsSubmoduleForce:
+                command.extend(['--force'])
+            return self._dovccmd(command)
         else:
             return defer.succeed(0)
 
@@ -554,6 +557,8 @@ class Git(Source):
             version = stdout.strip().split(' ')[2]
             if LooseVersion(version) < LooseVersion("1.6.5"):
                 self.supportsBranch = False
+            if LooseVersion(version) < LooseVersion("1.7.6"):
+                self.supportsSubmoduleForce = False
             return gitInstalled
         d.addCallback(checkSupport)
         return d
